@@ -30,7 +30,20 @@ namespace DotNetInterview
             // The search should be case insensitive and should
             // include partial matches.
 
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(softwareName))
+            {
+                throw new ArgumentNullException(nameof(softwareName));
+            }
+
+            List<string> installedApplications = new []
+            {
+                "Visual Studio 2022 Community",
+                "Postman",
+                "minecraft for windows",
+                "Clippy"
+            }.Where(a => !string.IsNullOrWhiteSpace(a)).ToList();
+
+            return installedApplications.Any(a => a.ToLower().Contains(softwareName.ToLower()));
         }
     }
 }
