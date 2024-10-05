@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,13 +36,17 @@ namespace DotNetInterview
                 throw new ArgumentNullException(nameof(softwareName));
             }
 
-            List<string> installedApplications = new []
+            _logger.LogInformation("Querying for installed apps. This may take a minute or so ...");
+            List<string> installedApplications = new List<string>();
+            var mos = new ManagementObjectSearcher("select * from Win32_Product");
+            foreach (ManagementObject mo in mos.Get())
             {
-                "Visual Studio 2022 Community",
-                "Postman",
-                "minecraft for windows",
-                "Clippy"
-            }.Where(a => !string.IsNullOrWhiteSpace(a)).ToList();
+                var appName = mo["Name"]?.ToString();
+                if (!string.IsNullOrWhiteSpace(appName))
+                {
+                    installedApplications.Add(appName);
+                }
+            }
 
             return installedApplications.Any(a => a.ToLower().Contains(softwareName.ToLower()));
         }
